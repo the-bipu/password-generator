@@ -52,6 +52,13 @@ const App: Component = () => {
     generatePassword();
   };
 
+  const sliderSize = (e: Event) => {
+    const target = e.target as HTMLInputElement;
+    setSize(parseInt(target.value, 10));
+    generatePassword();
+  };
+  
+
   generatePassword();
 
   return (
@@ -72,24 +79,31 @@ const App: Component = () => {
         <button class='px-6 h-12 text-white font-bold uppercase bg-blue-500 shadow rounded-full'>Copy</button>
       </div>
 
-      <div class="flex gap-2 mb-4">
-        <button onClick={() => changeSize(1)}>Increase</button>
-        <div>{size()}</div>
-        <button onClick={() => changeSize(-1)}>Decrease</button>
+      <div class='mt-6 mb-4 font-semibold text-xl'>🐦‍🔥 Password Length 🐦‍🔥</div>
+      <div class="flex gap-2 mb-4 items-center justify-center">
+        <button class='text-3xl font-bold w-12 h-12 pb-2 flex items-center justify-center rounded-full border border-[#acacac]' onClick={() => changeSize(-1)}>
+          -
+        </button>
+        <input type="range" min="1" max="40" value={size()} class="w-64 h-4 border border-[#acacac] rounded-full" id="myRange" onInput={sliderSize} />
+        <button class='text-3xl font-bold w-12 h-12 pb-2 flex items-center justify-center rounded-full border border-[#acacac]' onClick={() => changeSize(1)}>
+          +
+        </button>
       </div>
+
+      <div class='mt-6 mb-4 font-semibold text-xl'>🐦‍🔥 Characters Used 🐦‍🔥</div>
       <div class="flex gap-6">
         <Checkbox label="ABC" checked={isUpperOn()} onChange={() => toggleOption(setIsUpperOn, isUpperOn())} />
         <Checkbox label="abc" checked={isLowerOn()} onChange={() => toggleOption(setIsLowerOn, isLowerOn())} />
-        <Checkbox label="012" checked={isDigitOn()} onChange={() => toggleOption(setIsDigitOn, isDigitOn())} />
-        <Checkbox label="#$%" checked={isSpecialOn()} onChange={() => toggleOption(setIsSpecialOn, isSpecialOn())} />
+        <Checkbox label="123" checked={isDigitOn()} onChange={() => toggleOption(setIsDigitOn, isDigitOn())} />
+        <Checkbox label="#$&" checked={isSpecialOn()} onChange={() => toggleOption(setIsSpecialOn, isSpecialOn())} />
       </div>
     </div>
   );
 };
 
 const Checkbox = (props: { label: string; checked: boolean; onChange: () => void }) => (
-  <label class="flex gap-2 items-center">
-    <input type="checkbox" checked={props.checked} onChange={props.onChange} />
+  <label class="flex gap-2 justify-center font-mono items-center font-medium text-xl">
+    <input type="checkbox" class={`w-6 h-6 ${!props.checked && 'inner-shadow'}`} checked={props.checked} onChange={props.onChange} />
     {props.label}
   </label>
 );
