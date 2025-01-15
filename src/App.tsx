@@ -56,8 +56,22 @@ const App: Component = () => {
 
   return (
     <div class="flex flex-col w-full min-h-screen items-center justify-center py-8">
-      <h1 class="text-3xl font-bold mb-4">Password Generator</h1>
-      <div class="text-2xl font-mono mb-4">{password()}</div>
+      <h1 class="text-6xl font-bold mb-4">Random Password Generator</h1>
+      <div class='text-xl font-light mb-8'>Create strong and secure passwords to keep your account safe online.</div>
+
+      <div class='flex flex-row gap-4'>
+        <div class="mb-4 pl-10 py-2 border border-[#acacac] flex flex-row gap-5 rounded-full inner-shadow">
+          <div class='text-2xl font-mono pr-4'>
+            {password()}
+          </div>
+          <div class='bg-orange-400 text-white px-5 mr-3 text-lg flex items-center justify-center rounded-full'>
+            <button class='uppercase'>strong</button>
+          </div>
+        </div>
+
+        <button class='px-6 h-12 text-white font-bold uppercase bg-blue-500 shadow rounded-full'>Copy</button>
+      </div>
+
       <div class="flex gap-2 mb-4">
         <button onClick={() => changeSize(1)}>Increase</button>
         <div>{size()}</div>
