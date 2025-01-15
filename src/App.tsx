@@ -1,13 +1,83 @@
-import type { Component } from 'solid-js';
-
-import logo from './logo.svg';
+import { Component, createSignal } from 'solid-js';
 
 const App: Component = () => {
+  const [size, setSize] = createSignal(10);
+  const [password, setPassword] = createSignal('');
+
+  const [isUpperOn, setIsUpperOn] = createSignal(true);
+  const [isLowerOn, setIsLowerOn] = createSignal(true);
+  const [isDigitOn, setIsDigitOn] = createSignal(true);
+  const [isSpecialOn, setIsSpecialOn] = createSignal(true);
+
+  const charPools = {
+    upper: 'ABCDEFGHIJKLMNOPQRSTUVWXYZ',
+    lower: 'abcdefghijklmnopqrstuvwxyz',
+    digits: '0123456789',
+    special: '!@#$%^&*()-_=+[]{}|;:,.<>?/~`',
+  };
+
+  const generatePassword = () => {
+    const pool = [
+      isUpperOn() && charPools.upper,
+      isLowerOn() && charPools.lower,
+      isDigitOn() && charPools.digits,
+      isSpecialOn() && charPools.special,
+    ]
+      .filter(Boolean)
+      .join('');
+
+    if (!pool) {
+      setPassword('Select at least one option');
+      return;
+    }
+
+    let newPassword = '';
+    for (let i = 0; i < size(); i++) {
+      const randomIndex = Math.floor(Math.random() * pool.length);
+      newPassword += pool[randomIndex];
+    }
+    setPassword(scrambleString(newPassword));
+  };
+
+  const scrambleString = (str: string) =>
+    str.split('').sort(() => Math.random() - 0.5).join('');
+
+  const toggleOption = (setter: (value: boolean) => void, current: boolean) => {
+    setter(!current);
+    generatePassword();
+  };
+
+  const changeSize = (delta: number) => {
+    setSize(Math.max(1, size() + delta));
+    generatePassword();
+  };
+
+  generatePassword();
+
   return (
-    <h1 class="text-3xl font-bold underline">
-      Hello world!
-    </h1>
+    <div class="flex flex-col w-full min-h-screen items-center justify-center py-8">
+      <h1 class="text-3xl font-bold mb-4">Password Generator</h1>
+      <div class="text-2xl font-mono mb-4">{password()}</div>
+      <div class="flex gap-2 mb-4">
+        <button onClick={() => changeSize(1)}>Increase</button>
+        <div>{size()}</div>
+        <button onClick={() => changeSize(-1)}>Decrease</button>
+      </div>
+      <div class="flex gap-6">
+        <Checkbox label="ABC" checked={isUpperOn()} onChange={() => toggleOption(setIsUpperOn, isUpperOn())} />
+        <Checkbox label="abc" checked={isLowerOn()} onChange={() => toggleOption(setIsLowerOn, isLowerOn())} />
+        <Checkbox label="012" checked={isDigitOn()} onChange={() => toggleOption(setIsDigitOn, isDigitOn())} />
+        <Checkbox label="#$%" checked={isSpecialOn()} onChange={() => toggleOption(setIsSpecialOn, isSpecialOn())} />
+      </div>
+    </div>
   );
 };
+
+const Checkbox = (props: { label: string; checked: boolean; onChange: () => void }) => (
+  <label class="flex gap-2 items-center">
+    <input type="checkbox" checked={props.checked} onChange={props.onChange} />
+    {props.label}
+  </label>
+);
 
 export default App;
