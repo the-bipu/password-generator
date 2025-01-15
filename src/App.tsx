@@ -9,6 +9,8 @@ const App: Component = () => {
   const [isDigitOn, setIsDigitOn] = createSignal(true);
   const [isSpecialOn, setIsSpecialOn] = createSignal(true);
 
+  const [copyStatus, setCopyStatus] = createSignal('Copy');
+
   const charPools = {
     upper: 'ABCDEFGHIJKLMNOPQRSTUVWXYZ',
     lower: 'abcdefghijklmnopqrstuvwxyz',
@@ -57,7 +59,20 @@ const App: Component = () => {
     setSize(parseInt(target.value, 10));
     generatePassword();
   };
-  
+
+  const copyToClipboard = () => {
+    navigator.clipboard
+      .writeText(password())
+      .then(() => {
+        setCopyStatus('Copied!');
+        setTimeout(() => setCopyStatus('Copy'), 5000);
+      })
+      .catch(() => alert('Failed to copy password.'));
+  };
+
+  const refreshPass = () => {
+    generatePassword();
+  }
 
   generatePassword();
 
@@ -67,16 +82,33 @@ const App: Component = () => {
       <div class='text-xl font-light mb-8'>Create strong and secure passwords to keep your account safe online.</div>
 
       <div class='flex flex-row gap-4'>
-        <div class="mb-4 pl-10 py-2 border border-[#acacac] flex flex-row gap-5 rounded-full inner-shadow">
-          <div class='text-2xl font-mono pr-4'>
+        <div class="mb-4 pl-10 py-2 border border-[#acacac] flex flex-row rounded-full inner-shadow">
+          <div class='text-2xl font-mono pr-4 mr-4'>
             {password()}
           </div>
-          <div class='bg-orange-400 text-white px-5 mr-3 text-lg flex items-center justify-center rounded-full'>
-            <button class='uppercase'>strong</button>
+
+          <div class='text-sm mr-2 flex items-center justify-center'>
+            {size() <= 4 ? (
+              <button class='px-5 h-8 uppercase font-medium bg-[#ce3a3a] text-white rounded-full'>very weak</button>
+            ) : size() <= 8 ? (
+              <button class='px-5 h-8 uppercase font-medium bg-[#e28d3e] text-white rounded-full'>weak</button>
+            ) : size() <= 10 ? (
+              <button class='px-5 h-8 uppercase font-medium bg-[#667d58] text-white rounded-full'>good</button>
+            ) : size() <= 14 ? (
+              <button class='px-5 h-8 uppercase font-medium bg-[#56ab3d] text-white rounded-full'>strong</button>
+            ) : (
+              <button class='px-5 h-8 uppercase font-medium bg-[#3c5ef8] text-white rounded-full'>very strong</button>
+            )}
           </div>
+
+          <button class='mr-3 w-8 h-8 flex items-center justify-center bg-white rounded-full' onClick={refreshPass}>
+            🪭
+          </button>
         </div>
 
-        <button class='px-6 h-12 text-white font-bold uppercase bg-blue-500 shadow rounded-full'>Copy</button>
+        <button class='px-6 h-12 text-white font-bold uppercase bg-blue-500 shadow rounded-full' onClick={copyToClipboard}>
+          {copyStatus()}
+        </button>
       </div>
 
       <div class='mt-6 mb-4 font-semibold text-xl'>🐦‍🔥 Password Length 🐦‍🔥</div>
